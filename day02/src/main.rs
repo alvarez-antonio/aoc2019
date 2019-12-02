@@ -11,12 +11,10 @@ fn start_program(inputString: String) -> usize {
     memory[1] = 12;
     memory[2] = 2;
 
-    run_program(&mut memory);
-    
-    memory[0]
+    run_program(&mut memory)
 }
 
-fn run_program(memory: &mut Vec<usize>) {
+fn run_program(memory: &mut Vec<usize>) -> usize {
     for x in 0..memory.len() {
         let op_position = x * 4;
         let operation = memory[op_position];
@@ -36,6 +34,8 @@ fn run_program(memory: &mut Vec<usize>) {
         }
         print!("{}\n", memory[storage_position]);
     }
+
+    memory[0]
 }
 
 fn get_input_string() -> String {
@@ -56,25 +56,25 @@ fn generate_memory(inputString: String) -> Vec<usize> {
 
 #[test]
 fn t1() {
-    assert_eq!(2, start_program("1,0,0,0,99".to_string()))
+    assert_eq!(2, run_program(&mut vec![1,0,0,0,99]))
 }
 
 #[test]
 fn t2() {
-    assert_eq!(2, start_program("2,3,0,3,99".to_string()))
+    assert_eq!(2, run_program(&mut vec![2,3,0,3,99]))
 }
 
 #[test]
 fn t3() {
-    assert_eq!(2, start_program("2,4,4,5,99,0".to_string()))
+    assert_eq!(2, run_program(&mut vec![2,4,4,5,99,0]))
 }
 
 #[test]
 fn t4() {
-    assert_eq!(30, start_program("1,1,1,4,99,5,6,0,99".to_string()))
+    assert_eq!(30, run_program(&mut vec![1,1,1,4,99,5,6,0,99]))
 }
 
 #[test]
 fn t5() {
-    assert_eq!(3500, start_program("1,9,10,3,2,3,11,0,99,30,40,50".to_string()))
+    assert_eq!(3500, run_program(&mut vec![1,9,10,3,2,3,11,0,99,30,40,50]))
 }
