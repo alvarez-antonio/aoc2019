@@ -2,16 +2,35 @@ use std::fs::File;
 use std::io::prelude::*;
 
 fn main() {
-    print!("{}", start_program(get_input_string()))
+    print!("{}", part2_program(get_input_string()))
 }
 
-fn start_program(inputString: String) -> usize {
+fn part1_program(inputString: String) -> usize {
     let mut memory = generate_memory(inputString);
 
     memory[1] = 12;
     memory[2] = 2;
 
     run_program(&mut memory)
+}
+
+fn part2_program(inputString: String) -> usize {
+    let original_memory = generate_memory(inputString);
+
+    for noun in 0..99 {
+        for verb in 0..99 {
+            let mut memory = original_memory.to_vec();
+            memory[1] = noun;
+            memory[2] = verb;
+            if run_program(&mut memory) == 19690720 {
+                print("{} ", noun)
+                print("{} ", verb)
+                return 100 * noun + verb
+            }
+        }
+    }
+
+    panic!("Morreu.");
 }
 
 fn run_program(memory: &mut Vec<usize>) -> usize {
