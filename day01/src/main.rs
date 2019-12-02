@@ -1,18 +1,39 @@
 use std::fs::File;
 use std::io::{prelude::*, BufReader};
+use std::cmp::max;
 
 fn main() {
     
-    let total_mass: i32 = get_inputs()
-        .iter()
-        .map( |mass| calculate_fuel(*mass))
-        .sum();
+    let total_mass: i32 = part2_mass();
 
     print!("{}", total_mass);
 }
 
-fn calculate_fuel(mass: i32) -> i32 {
-    ( mass / 3 ) - 2
+fn part1_mass() -> i32 {
+    get_inputs()
+            .iter()
+            .map( |mass| calculate_fuel_for_mass(*mass))
+            .sum()
+}
+
+fn part2_mass() -> i32 {
+    get_inputs()
+        .iter()
+        .map( |mass| complete_fuel_compute(*mass))
+        .sum()
+}
+
+fn calculate_fuel_for_mass(mass: i32) -> i32 {
+    max(0,( mass / 3 ) - 2)
+}
+
+fn complete_fuel_compute(mass: i32) -> i32 {
+    let fuel = calculate_fuel_for_mass(mass);
+    if fuel == 0 {
+        0
+    } else {
+        fuel + complete_fuel_compute(fuel)
+    }
 }
 
 fn get_inputs() -> Vec<i32> {
@@ -26,20 +47,40 @@ fn get_inputs() -> Vec<i32> {
 
 #[test]
 fn basic_test() {
-    assert_eq!(calculate_fuel(12), 2);
+    assert_eq!(calculate_fuel_for_mass(12), 2);
 }
 
 #[test]
 fn rounding_test() {
-    assert_eq!(calculate_fuel(14), 2);
+    assert_eq!(calculate_fuel_for_mass(14), 2);
 }
 
 #[test]
 fn large_test() {
-    assert_eq!(calculate_fuel(1969), 654);
+    assert_eq!(calculate_fuel_for_mass(1969), 654);
 }
 
 #[test]
 fn larger_test() {
-    assert_eq!(calculate_fuel(100756), 33583);
+    assert_eq!(calculate_fuel_for_mass(100756), 33583);
+}
+
+#[test]
+fn part2_basic_test() {
+    assert_eq!(complete_fuel_compute(12), 2);
+}
+
+#[test]
+fn part2_rounding_test() {
+    assert_eq!(complete_fuel_compute(14), 2);
+}
+
+#[test]
+fn part2_large_test() {
+    assert_eq!(complete_fuel_compute(1969), 966);
+}
+
+#[test]
+fn part2_larger_test() {
+    assert_eq!(complete_fuel_compute(100756), 50346);
 }
