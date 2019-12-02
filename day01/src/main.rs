@@ -37,7 +37,7 @@ fn complete_fuel_compute(mass: i32) -> i32 {
 }
 
 fn get_inputs() -> Vec<i32> {
-    let file = File::open("/Users/aalvarez/Projects/DiaCriativo/AdventOfCode2019/day01/src/input/input.txt").expect("Couldn´t open file");
+    let file = File::open("/Users/aalvarez/Projects/DiaCriativo/AdventOfCode2019/inputs/day01.txt").expect("Couldn´t open file");
     let buf = BufReader::new(file);
 
     buf.lines()
