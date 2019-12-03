@@ -1,15 +1,18 @@
 use std::fs::File;
 use std::io::{prelude::*, BufReader};
 use std::fmt;
+use std::collections::HashMap;
 
 enum Direction { U, R, D, L }
 
-#[derive(Debug)]
+#[derive(Debug, Hash)]
 struct Point { x: i32, y: i32 }
 impl PartialEq for Point {
     fn eq(&self, other: &Self) -> bool {
         self.x == other.x && self.y == other.y
     }
+}
+impl Eq for Point {
 }
 impl Copy for Point {} 
 impl Clone for Point {
@@ -17,6 +20,8 @@ impl Clone for Point {
         Point { x: self.x, y: self.y }
     }
 }
+
+
 
 impl fmt::Display for Point {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
@@ -29,14 +34,41 @@ struct Movement { direction: Direction, distance: i32 }
 type Path = Vec<Point>;
 
 fn main() {
-    print!("{}", run(get_inputs()))
+    print!("{}", part2_solution(get_inputs()))
 }
 
-fn run(path_strings: Vec<String>) -> i32 {
-    let paths: Vec<Path> = path_strings
-        .iter()
-        .map(|path| parse_path(path.to_string()))
-        .collect();
+fn part2_solution(path_strings: Vec<String>) -> i32 {
+
+    let paths = read_paths(path_strings);
+    let mut common: HashMap<Point, i32> = HashMap::new();
+    for (p1_distance, p1) in paths[0].iter().enumerate() {
+        for (p2_distance, p2) in paths[1].iter().enumerate() {
+            if p1 == p2 && p1 != &(Point {x: 0, y: 0}) {
+                let steps: i32 = (p1_distance + p2_distance) as i32;
+                let point = p1.clone();
+                if let Some(distance) = common.get(&point) {
+                    print!("{} ", distance);
+                    print!("{}\n", steps);
+                    if distance > &steps { 
+                        common.insert(point, steps);
+                    } 
+                } else {
+                    common.insert(point, steps);
+                }
+            }
+        }
+    }
+    
+    print!("{:?}\n", common);
+    common
+        .into_iter()
+        .map(|(_, v)| v)
+        .min()
+        .expect("Minimum distance not found")
+}
+
+fn part1_solution(path_strings: Vec<String>) -> i32 {
+    let paths = read_paths(path_strings);
 
     let mut common: Vec<Point> = Vec::new();
     for p1 in &paths[0] {
@@ -57,6 +89,13 @@ fn run(path_strings: Vec<String>) -> i32 {
 
 fn compute_manhattan_distance_to_origin(point: Point) -> i32 {
     (point.x).abs() + (point.y).abs()
+}
+
+fn read_paths(path_strings: Vec<String>) -> Vec<Path> {
+    path_strings
+        .iter()
+        .map(|path| parse_path(path.to_string()))
+        .collect()
 }
 
 fn get_inputs() -> Vec<String> {
@@ -124,7 +163,7 @@ fn test1() {
         "R75,D30,R83,U83,L12,D49,R71,U7,L72".to_string(),
         "U62,R66,U55,R34,D71,R55,D58,R83".to_string()
     ];
-    assert_eq!(159, run(input))
+    assert_eq!(159, part1_solution(input))
 }
 
 #[test]
@@ -133,5 +172,23 @@ fn test2() {
         "R98,U47,R26,D63,R33,U87,L62,D20,R33,U53,R51".to_string(),
         "U98,R91,D20,R16,D67,R40,U7,R15,U6,R7".to_string()
     ];
-    assert_eq!(135, run(input))
+    assert_eq!(135, part1_solution(input))
+}
+
+#[test]
+fn test3() {
+    let input = vec![
+        "R75,D30,R83,U83,L12,D49,R71,U7,L72".to_string(),
+        "U62,R66,U55,R34,D71,R55,D58,R83".to_string()
+    ];
+    assert_eq!(610, part2_solution(input))
+}
+
+#[test]
+fn test4() {
+    let input = vec![
+        "R98,U47,R26,D63,R33,U87,L62,D20,R33,U53,R51".to_string(),
+        "U98,R91,D20,R16,D67,R40,U7,R15,U6,R7".to_string()
+    ];
+    assert_eq!(410, part2_solution(input))
 }
