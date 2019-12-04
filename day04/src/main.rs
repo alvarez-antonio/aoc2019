@@ -75,10 +75,6 @@ fn has_strict_double(attempt: usize) -> bool {
     count_map.clone().values().any(|value| *value == 2)
 }
 
-fn not_in(array: Vec<usize>, key: usize) -> bool {
-    array.into_iter().all(|k2| k2 < key)
-}
-
 #[test]
 fn test1() {
     assert_eq!(true, matches_part1_criteria(111111))
